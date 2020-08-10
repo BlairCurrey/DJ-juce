@@ -42,7 +42,7 @@ public:
     bool isInterestedInFileDrag(const juce::StringArray& files) override;
     /**Detects if file is dropped onto deck*/
     void filesDropped(const juce::StringArray &files, int x, int y) override;
-
+    /**Listen for changes to the waveform*/
     void timerCallback() override;
 
 private:
@@ -56,6 +56,7 @@ private:
     juce::Label speedLabel;
     juce::Slider posSlider;
     juce::Label posLabel;
+    juce::Slider reverbSlider;
     juce::TextButton loadButton{ "LOAD" };
 
     void loadFile(juce::URL audioURL);

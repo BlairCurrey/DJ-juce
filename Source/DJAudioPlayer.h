@@ -35,10 +35,22 @@ class DJAudioPlayer : public juce::AudioSource
         void setSpeed(double ratio);
         /**Gets relative position of playhead*/
         double getPositionRelative();
+        /**Gets the length of transport source in seconds*/
+        double getLengthInSeconds();
+        /**Sets the amount of reverb*/
+        void setRoomSize(double size);
+        /**Sets the amount of reverb*/
+        void setDamping(double dampingAmt);
+        /**Sets the amount of reverb*/
+        void setWetLevel(double wetLevel);
+        /**Sets the amount of reverb*/
+        void setDryLevel(double dryLevel);
     private:
         void setPosition(double posInSecs);
         juce::AudioFormatManager& formatManager;
         std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
         juce::AudioTransportSource transportSource;
         juce::ResamplingAudioSource resampleSource{ &transportSource, false, 2 };
+        juce::ReverbAudioSource reverbSource{ &resampleSource, true };
+        juce::Reverb::Parameters reverbParameters;
 };

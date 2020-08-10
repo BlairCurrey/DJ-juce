@@ -22,24 +22,38 @@ PlaylistComponent::PlaylistComponent(DeckGUI* _deckGUI1,
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
 
-    library.getHeader().addColumn("Tracks", 1, 235);
-    library.getHeader().addColumn("", 2, 30);
-    //library.getHeader().addColumn("", 3, 50);
+    // library table configuration
+    library.getHeader().addColumn("Tracks", 1, 171);
+    library.getHeader().addColumn("Length", 2, 65);
+    library.getHeader().addColumn("", 3, 30);
     library.setModel(this);
     
+    // add components
     addAndMakeVisible(importButton);
+    addAndMakeVisible(searchField);
     addAndMakeVisible(library);
     addAndMakeVisible(addToPlayer1Button);
     addAndMakeVisible(addToPlayer2Button);
 
+    // attack listeners
     importButton.addListener(this);
+    searchField.addListener(this);
     addToPlayer1Button.addListener(this);
     addToPlayer2Button.addListener(this);
     library.addMouseListener(this, true);
+
+    // searchField configuration
+    searchField.setTextToShowWhenEmpty("Search Tracks (enter to submit)", 
+                                       juce::Colours::orange);
+    searchField.onReturnKey = [this] { searchLibrary (searchField.getText()); };
+    
+    // load library from file
+    loadLibrary();
 }
 
 PlaylistComponent::~PlaylistComponent()
 {
+    saveLibrary();
 }
 
 void PlaylistComponent::paint (juce::Graphics& g)
@@ -67,7 +81,8 @@ void PlaylistComponent::resized()
 
     //                   x start, y start, width, height
     importButton.setBounds(0, 0, getWidth(), getHeight() / 16);
-    library.setBounds(0, getHeight() / 16, getWidth(), 14 * getHeight() / 16);
+    library.setBounds(0, 1 * getHeight() / 16, getWidth(), 13 * getHeight() / 16);
+    searchField.setBounds(0, 14 * getHeight() / 16, getWidth(), getHeight() / 16);
     addToPlayer1Button.setBounds(0, 15 * getHeight() / 16, getWidth() / 2, getHeight() / 16);
     addToPlayer2Button.setBounds(getWidth() / 2, 15 * getHeight() / 16, getWidth() / 2, getHeight() / 16);
 }
@@ -104,14 +119,28 @@ void PlaylistComponent::paintCell(juce::Graphics& g,
 {
     if (rowNumber < getNumRows())
     {
-        g.drawText(tracks[rowNumber].title,
-            2,
-            0,
-            width - 4,
-            height,
-            juce::Justification::centredLeft,
-            true
-        );
+        if (columnId == 1)
+        {
+            g.drawText(tracks[rowNumber].title,
+                2,
+                0,
+                width - 4,
+                height,
+                juce::Justification::centredLeft,
+                true
+            );
+        }
+        if (columnId == 2)
+        {
+            g.drawText(tracks[rowNumber].length,
+                2,
+                0,
+                width - 4,
+                height,
+                juce::Justification::centred,
+                true
+            );
+        }
     }
 }
 
@@ -120,7 +149,7 @@ juce::Component* PlaylistComponent::refreshComponentForCell(int rowNumber,
                                                       bool isRowSelected,
                                                       Component* existingComponentToUpdate)
 {
-    if (columnId == 2)
+    if (columnId == 3)
     {
         if (existingComponentToUpdate == nullptr)
         {
@@ -132,18 +161,6 @@ juce::Component* PlaylistComponent::refreshComponentForCell(int rowNumber,
             existingComponentToUpdate = btn;
         }
     }
-    //if (columnId == 3)
-    //{
-    //    if (existingComponentToUpdate == nullptr)
-    //    {
-    //        juce::TextButton* btn = new juce::TextButton{ "X" };
-    //        juce::String id{ std::to_string(rowNumber) };
-    //        btn->setComponentID(id);
-
-    //        btn->addListener(this);
-    //        existingComponentToUpdate = btn;
-    //    }
-    //}
     return existingComponentToUpdate;
 }
 
@@ -173,33 +190,6 @@ void PlaylistComponent::buttonClicked(juce::Button* button)
         library.updateContent();
     }
 }
-
-//void PlaylistComponent::mouseDown(const juce::MouseEvent& event)
-//{
-//    //get selected row number
-//    int selectedRow{ library.getSelectedRow() };
-//    int rowHeight = library.getRowHeight();
-//    int mouseX = event.getMouseDownX();
-//    int mouseY = event.getMouseDownY() + rowHeight * selectedRow + 1;
-//
-//    DBG("mouseX " << mouseX);
-//    DBG("mouseY " << mouseY);
-//
-//    //if mouse over selected row
-//    juce::Rectangle<int> selectedRowCoords = library.getCellPosition(1,selectedRow - 1,true);
-//
-//    DBG("rowX " << selectedRowCoords.getX());
-//    DBG("rowY " << selectedRowCoords.getY());
-//    // deselect
-//    //if (selectedRowCoords.contains(event.getPosition()))
-//    bool isMouseOver = selectedRowCoords.contains(mouseX, mouseY);
-//
-//    if (isMouseOver && selectedRow >= 0)
-//    {
-//        DBG("Clicked on track: " << tracks[selectedRow]);
-//        library.flipRowSelection(selectedRow);
-//    }
-//}
 
 void PlaylistComponent::loadInPlayer(DeckGUI* deckGUI)
 {
@@ -234,8 +224,10 @@ void PlaylistComponent::importToLibrary()
             if (!isInTracks(fileNameWithoutExtension)) // if not already loaded
             {
                 Track newTrack{ file };
-                DBG("loaded file: " << newTrack.title);
+                juce::URL audioURL{ file };
+                newTrack.length = getLength(audioURL) ;
                 tracks.push_back(newTrack);
+                DBG("loaded file: " << newTrack.title);
             }
             else // display info message
             {
@@ -260,12 +252,88 @@ void PlaylistComponent::deleteFromTracks(int id)
     tracks.erase(tracks.begin() + id);
 }
 
-//void PlaylistComponent::findIDFromCoords(int rowNumber, int colNumber)
-//{
-//  https://stackoverflow.com/questions/16819113/mapping-unique-points-to-unique-integer-index
-//}
-//
-//void PlaylistComponent::findCoordsFromID(int rowNumber, int colNumber)
-//{
-//
-//}
+juce::String PlaylistComponent::getLength(juce::URL audioURL)
+{
+    playerForParsingMetaData->loadURL(audioURL);
+    double seconds{ playerForParsingMetaData->getLengthInSeconds() };
+    juce::String minutes{ secondsToMinutes(seconds) };
+    return minutes;
+}
+
+juce::String PlaylistComponent::secondsToMinutes(double seconds)
+{
+    //find seconds and minutes and make into string
+    int secondsRounded{ int(std::round(seconds)) };
+    juce::String min{ std::to_string(secondsRounded / 60) };
+    juce::String sec{ std::to_string(secondsRounded % 60) };
+    
+    if (sec.length() < 2) // if seconds is 1 digit or less
+    {
+        //add '0' to seconds until seconds is length 2
+        sec = sec.paddedLeft('0', 2);
+    }
+    return juce::String{ min + ":" + sec };
+}
+
+void PlaylistComponent::searchLibrary(juce::String searchText)
+{
+    DBG("Searching library for: " << searchText);
+    if (searchText != "")
+    {
+        int rowNumber = whereInTracks(searchText);
+        library.selectRow(rowNumber);
+    }
+    else
+    {
+        library.deselectAllRows();
+    }
+}
+
+int PlaylistComponent::whereInTracks(juce::String searchText)
+{
+    // finds index where track title contains searchText
+    auto it = find_if(tracks.begin(), tracks.end(), 
+        [&searchText](const Track& obj) {return obj.title.contains(searchText); });
+    int i = -1;
+
+    if (it != tracks.end())
+    {
+        i = std::distance(tracks.begin(), it);
+    }
+
+    return i;
+}
+
+void PlaylistComponent::saveLibrary()
+{
+    // create .csv to save library
+    std::ofstream myLibrary("my-library.csv");
+
+    // save library to file
+    for (Track& t : tracks)
+    {
+        myLibrary << t.file.getFullPathName() << "," << t.length << "\n";
+    }
+}
+
+void PlaylistComponent::loadLibrary()
+{
+    // create input stream from saved library
+    std::ifstream myLibrary("my-library.csv");
+    std::string filePath;
+    std::string length;
+
+    // Read data, line by line
+    if (myLibrary.is_open())
+    {
+        while (getline(myLibrary, filePath, ',')) {
+            juce::File file{ filePath };
+            Track newTrack{ file };
+
+            getline(myLibrary, length);
+            newTrack.length = length;
+            tracks.push_back(newTrack);
+        }
+    }
+    myLibrary.close();
+}

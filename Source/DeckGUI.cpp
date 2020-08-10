@@ -29,6 +29,7 @@ DeckGUI::DeckGUI(int _id,
     addAndMakeVisible(speedLabel);
     addAndMakeVisible(posSlider);
     addAndMakeVisible(posLabel);
+    addAndMakeVisible(reverbSlider);
     addAndMakeVisible(waveformDisplay);
     addAndMakeVisible(loadButton);
 
@@ -38,6 +39,7 @@ DeckGUI::DeckGUI(int _id,
     volSlider.addListener(this);
     speedSlider.addListener(this);
     posSlider.addListener(this);
+    reverbSlider.addListener(this);
     loadButton.addListener(this);
 
     //configure volume slider and label
@@ -79,6 +81,10 @@ DeckGUI::DeckGUI(int _id,
     posLabel.setText("Position", juce::dontSendNotification);
     posLabel.attachToComponent(&posSlider, true);
 
+    //configure reverb slider
+    reverbSlider.setRange(0.0, 1.0);
+    reverbSlider.setNumDecimalPlacesToDisplay(2);
+
     startTimer(500);
 }
 
@@ -115,7 +121,9 @@ void DeckGUI::resized()
     volSlider.setBounds(sliderLeft, getHeight() / 8, 3 * getWidth() / 3 - sliderLeft, getHeight() / 8);
     speedSlider.setBounds(sliderLeft, 2 * getHeight() / 8, 3 * getWidth() / 3 - sliderLeft, getHeight() / 8);
     posSlider.setBounds(sliderLeft, 3 * getHeight() / 8, 3 * getWidth() / 3 - sliderLeft, getHeight() / 8);
-    waveformDisplay.setBounds(0, 4 * getHeight() / 8, 3 * getWidth() / 3, 4 * getHeight() / 8);
+    reverbSlider.setBounds(0, 4 * getHeight() / 8, getWidth(), getHeight() / 8);
+    waveformDisplay.setBounds(0, 5 * getHeight() / 8, getWidth(), 3 * getHeight() / 8);
+    //waveformDisplay.setBounds(0, 4 * getHeight() / 8, 3 * getWidth() / 3, 4 * getHeight() / 8);
 }
 
 void DeckGUI::buttonClicked(juce::Button* button)
@@ -157,6 +165,11 @@ void DeckGUI::sliderValueChanged(juce::Slider* slider)
     {
         DBG("Position slider moved " << slider->getValue());
         player->setPositionRelative(slider->getValue());
+    }
+    if (slider == &reverbSlider)
+    {
+        DBG("Reverb slider moved " << slider->getValue());
+        player->setRoomSize(slider->getValue());
     }
 }
 

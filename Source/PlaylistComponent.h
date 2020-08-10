@@ -13,6 +13,7 @@
 #include <JuceHeader.h>
 #include <vector>
 #include <algorithm>
+#include <fstream>
 #include "Track.h"
 #include "DeckGUI.h"
 #include "DJAudioPlayer.h"
@@ -22,7 +23,8 @@
 */
 class PlaylistComponent  : public juce::Component,
                            public juce::TableListBoxModel,
-                           public juce::Button::Listener
+                           public juce::Button::Listener,
+                           public juce::TextEditor::Listener
 {
 public:
     PlaylistComponent(DeckGUI* _deckGUI1, 
@@ -54,12 +56,12 @@ public:
                                        bool isRowSelected, 
                                        Component* existingComponentToUpdate) override;
     void buttonClicked(juce::Button* button) override;
-    //void mouseDown(const juce::MouseEvent& event);
 private:
-    juce::TableListBox library;
-    //std::vector<juce::String> tracks;
     std::vector<Track> tracks;
+    
     juce::TextButton importButton{ "IMPORT TRACKS" };
+    juce::TextEditor searchField;
+    juce::TableListBox library;
     juce::TextButton addToPlayer1Button{ "ADD TO DECK 1" };
     juce::TextButton addToPlayer2Button{ "ADD TO DECK 2" };
 
@@ -67,10 +69,17 @@ private:
     DeckGUI* deckGUI2;
     DJAudioPlayer* playerForParsingMetaData;
     
+    juce::String getLength(juce::URL audioURL);
+    juce::String secondsToMinutes(double seconds);
+
     void importToLibrary();
+    void searchLibrary(juce::String searchText);
+    void saveLibrary();
+    void loadLibrary();
     void deleteFromTracks(int id);
-    void loadInPlayer(DeckGUI* deckGUI);
     bool isInTracks(juce::String fileNameWithoutExtension);
+    int whereInTracks(juce::String searchText);
+    void loadInPlayer(DeckGUI* deckGUI);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlaylistComponent)
 };

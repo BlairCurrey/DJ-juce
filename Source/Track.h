@@ -15,12 +15,10 @@ class Track
 {
     public:
         Track(juce::File _file);
+        juce::File file;
         juce::URL URL;
         juce::String title;
-        juce::String artist;
         juce::String length;
         /**objects are compared by title*/
         bool operator==(const juce::String& other) const;
-    private:
-        juce::File file;
 };
