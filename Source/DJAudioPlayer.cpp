@@ -13,11 +13,11 @@ DJAudioPlayer::DJAudioPlayer(juce::AudioFormatManager& _formatManager
                             ) : formatManager(_formatManager)
 {
     //Default reverb settings
-    juce::Reverb::Parameters params = reverbSource.getParameters();
-    DBG("params room size: " << params.roomSize);
-    DBG("params damping: " << params.damping);
-    DBG("params wet level: " << params.wetLevel);
-    DBG("params dry level: " << params.dryLevel);
+    //juce::Reverb::Parameters params = reverbSource.getParameters();
+    //DBG("params room size: " << params.roomSize);
+    //DBG("params damping: " << params.damping);
+    //DBG("params wet level: " << params.wetLevel);
+    //DBG("params dry level: " << params.dryLevel);
 }
 
 DJAudioPlayer::~DJAudioPlayer()

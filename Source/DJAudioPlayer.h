@@ -51,6 +51,6 @@ class DJAudioPlayer : public juce::AudioSource
         std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
         juce::AudioTransportSource transportSource;
         juce::ResamplingAudioSource resampleSource{ &transportSource, false, 2 };
-        juce::ReverbAudioSource reverbSource{ &resampleSource, true };
+        juce::ReverbAudioSource reverbSource{ &resampleSource, false };
         juce::Reverb::Parameters reverbParameters;
 };
