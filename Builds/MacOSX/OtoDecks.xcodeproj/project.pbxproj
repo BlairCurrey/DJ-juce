@@ -57,6 +57,10 @@
 			isa = PBXBuildFile;
 			fileRef = B7C4F48E4FA7D1C3D95CF807;
 		};
+		D946B9D282E630D99F9DFBF2 = {
+			isa = PBXBuildFile;
+			fileRef = DC8382F51C2A4312F6F93A73;
+		};
 		4D6CC501C5BE9A751E44BC11 = {
 			isa = PBXBuildFile;
 			fileRef = 42D48DBA86F03BD1D2E76003;
@@ -205,6 +209,13 @@
 			name = "juce_data_structures";
 			path = "~/JUCE/modules/juce_data_structures";
 			sourceTree = "<absolute>";
+		};
+		3D0C71396A6AC7FB8080765C = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = CoordinatePlot.h;
+			path = ../../Source/CoordinatePlot.h;
+			sourceTree = "SOURCE_ROOT";
 		};
 		42D48DBA86F03BD1D2E76003 = {
 			isa = PBXFileReference;
@@ -430,6 +441,13 @@
 			path = System/Library/Frameworks/CoreAudioKit.framework;
 			sourceTree = SDKROOT;
 		};
+		DC8382F51C2A4312F6F93A73 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = CoordinatePlot.cpp;
+			path = ../../Source/CoordinatePlot.cpp;
+			sourceTree = "SOURCE_ROOT";
+		};
 		DEFEEC2D72B5CC5FC8437379 = {
 			isa = PBXFileReference;
 			lastKnownFileType = file;
@@ -482,6 +500,8 @@
 		F3739DDBEBFAE35119F14A76 = {
 			isa = PBXGroup;
 			children = (
+				DC8382F51C2A4312F6F93A73,
+				3D0C71396A6AC7FB8080765C,
 				42D48DBA86F03BD1D2E76003,
 				584F86794CBD78323E7A763E,
 				A8E49A3B33F88890F87FB562,
@@ -840,6 +860,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D946B9D282E630D99F9DFBF2,
 				4D6CC501C5BE9A751E44BC11,
 				771DBA8EADBF3A8969F3BE7F,
 				3407BA5608C36396CF939899,

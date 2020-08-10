@@ -23,8 +23,8 @@ PlaylistComponent::PlaylistComponent(DeckGUI* _deckGUI1,
     // initialise any special settings that your component needs.
 
     // library table configuration
-    library.getHeader().addColumn("Tracks", 1, 171);
-    library.getHeader().addColumn("Length", 2, 65);
+    library.getHeader().addColumn("Tracks", 1, 170);
+    library.getHeader().addColumn("Length", 2, 63);
     library.getHeader().addColumn("", 3, 30);
     library.setModel(this);
     

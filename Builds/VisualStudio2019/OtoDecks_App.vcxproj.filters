@@ -421,6 +421,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\CoordinatePlot.cpp">
+      <Filter>OtoDecks\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\Track.cpp">
       <Filter>OtoDecks\Source</Filter>
     </ClCompile>
@@ -2454,6 +2457,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\CoordinatePlot.h">
+      <Filter>OtoDecks\Source</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\Track.h">
       <Filter>OtoDecks\Source</Filter>
     </ClInclude>

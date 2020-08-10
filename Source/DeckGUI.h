@@ -13,7 +13,7 @@
 #include <JuceHeader.h>
 #include "DJAudioPlayer.h"
 #include "WaveformDisplay.h"
-//#include "PlaylistComponent.h"
+#include "CoordinatePlot.h"
 
 //==============================================================================
 /*
@@ -50,6 +50,7 @@ private:
     
     juce::TextButton playButton{ "PLAY" };
     juce::TextButton stopButton{ "STOP" };
+    juce::TextButton loadButton{ "LOAD" };
     juce::Slider volSlider;
     juce::Label volLabel;
     juce::Slider speedSlider;
@@ -57,7 +58,8 @@ private:
     juce::Slider posSlider;
     juce::Label posLabel;
     juce::Slider reverbSlider;
-    juce::TextButton loadButton{ "LOAD" };
+    CoordinatePlot reverbPlot1;
+    CoordinatePlot reverbPlot2;
 
     void loadFile(juce::URL audioURL);
 

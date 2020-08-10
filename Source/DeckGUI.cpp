@@ -23,24 +23,28 @@ DeckGUI::DeckGUI(int _id,
     // add all components and make visible
     addAndMakeVisible(playButton);
     addAndMakeVisible(stopButton);
+    addAndMakeVisible(loadButton);
     addAndMakeVisible(volSlider);
     addAndMakeVisible(volLabel);
     addAndMakeVisible(speedSlider);
     addAndMakeVisible(speedLabel);
     addAndMakeVisible(posSlider);
     addAndMakeVisible(posLabel);
-    addAndMakeVisible(reverbSlider);
+    //addAndMakeVisible(reverbSlider);
+    addAndMakeVisible(reverbPlot1);
+    addAndMakeVisible(reverbPlot2);
     addAndMakeVisible(waveformDisplay);
-    addAndMakeVisible(loadButton);
 
     // add listeners
     playButton.addListener(this);
     stopButton.addListener(this);
+    loadButton.addListener(this);
     volSlider.addListener(this);
     speedSlider.addListener(this);
     posSlider.addListener(this);
     reverbSlider.addListener(this);
-    loadButton.addListener(this);
+    //reverbPlot1.addListener(this);
+    //reverbPlot2.addListener(this);
 
     //configure volume slider and label
     double volDefaultValue = 0.5;
@@ -85,6 +89,10 @@ DeckGUI::DeckGUI(int _id,
     reverbSlider.setRange(0.0, 1.0);
     reverbSlider.setNumDecimalPlacesToDisplay(2);
 
+    //configure reverb plots
+    //reverbPlot1.setRange(0.0, 1.0);
+    //reverbPlot2.setRange(0.0, 1.0);
+
     startTimer(500);
 }
 
@@ -113,17 +121,20 @@ void DeckGUI::resized()
     // This method is where you should set the bounds of any child
     // components that your component contains..
     auto sliderLeft = getWidth() / 9;
+    auto mainRight = getWidth() - getHeight() / 2;
+    auto plotRight = getWidth() - mainRight; // should == getHeight() / 2
 
     //                   x start, y start, width, height
-    playButton.setBounds(0, 0, getWidth() / 3, getHeight() / 8);
-    stopButton.setBounds(getWidth() / 3, 0, getWidth() / 3, getHeight() / 8);
-    loadButton.setBounds(2 * getWidth() / 3, 0, getWidth() / 3, getHeight() / 8);
-    volSlider.setBounds(sliderLeft, getHeight() / 8, 3 * getWidth() / 3 - sliderLeft, getHeight() / 8);
-    speedSlider.setBounds(sliderLeft, 2 * getHeight() / 8, 3 * getWidth() / 3 - sliderLeft, getHeight() / 8);
-    posSlider.setBounds(sliderLeft, 3 * getHeight() / 8, 3 * getWidth() / 3 - sliderLeft, getHeight() / 8);
-    reverbSlider.setBounds(0, 4 * getHeight() / 8, getWidth(), getHeight() / 8);
-    waveformDisplay.setBounds(0, 5 * getHeight() / 8, getWidth(), 3 * getHeight() / 8);
-    //waveformDisplay.setBounds(0, 4 * getHeight() / 8, 3 * getWidth() / 3, 4 * getHeight() / 8);
+    playButton.setBounds(0, 0, mainRight / 3, getHeight() / 8);
+    stopButton.setBounds(mainRight / 3, 0, mainRight / 3, getHeight() / 8);
+    loadButton.setBounds(2 * mainRight / 3, 0, mainRight / 3, getHeight() / 8);
+    volSlider.setBounds(sliderLeft, getHeight() / 8, mainRight - sliderLeft, getHeight() / 8);
+    speedSlider.setBounds(sliderLeft, 2 * getHeight() / 8, mainRight - sliderLeft, getHeight() / 8);
+    posSlider.setBounds(sliderLeft, 3 * getHeight() / 8, mainRight - sliderLeft, getHeight() / 8);
+    //reverbSlider.setBounds(0, 4 * getHeight() / 8, mainRight, getHeight() / 8);
+    reverbPlot1.setBounds(mainRight, 0, plotRight, getHeight() / 2);
+    reverbPlot2.setBounds(mainRight, getHeight()/2, plotRight, getHeight() / 2);
+    waveformDisplay.setBounds(0, 4 * getHeight() / 8, mainRight, 4 * getHeight() / 8);
 }
 
 void DeckGUI::buttonClicked(juce::Button* button)
@@ -166,11 +177,11 @@ void DeckGUI::sliderValueChanged(juce::Slider* slider)
         DBG("Position slider moved " << slider->getValue());
         player->setPositionRelative(slider->getValue());
     }
-    if (slider == &reverbSlider)
-    {
-        DBG("Reverb slider moved " << slider->getValue());
-        player->setRoomSize(slider->getValue());
-    }
+    //if (slider == &reverbSlider)
+    //{
+    //    DBG("Reverb slider moved " << slider->getValue());
+    //    player->setRoomSize(slider->getValue());
+    //}
 }
 
 bool DeckGUI::isInterestedInFileDrag(const juce::StringArray& files)
