@@ -83,13 +83,13 @@ void CoordinatePlot::removeListener(Listener* l) { listeners.remove(l); }
 
 float CoordinatePlot::getX()
 {
-    float transX = translateCoordToRange(coordsRaw['x']);
+    float transX = constrain(coordsRaw['x']);
     return transX;
 }
 
 float CoordinatePlot::getY()
 {
-    float transInvY = invertYCoord(translateCoordToRange(coordsRaw['y']));
+    float transInvY = invertYCoord(constrain(coordsRaw['y']));
     return transInvY;
 }
 
@@ -188,7 +188,7 @@ void CoordinatePlot::setSettings()
     bottom = float(getLocalBounds().getBottom());
 }
 
-float CoordinatePlot::translateCoordToRange(float coord)
+float CoordinatePlot::constrain(float coord)
 {
     float oldRangeMin = float(getLocalBounds().getX());
     float oldRangeMax = float(getLocalBounds().getWidth());

@@ -80,7 +80,7 @@ class CoordinatePlot  : public juce::Component
         void drawText(juce::Graphics& g);
         bool markerMoved{ false };
 
-        float translateCoordToRange(float coord);
+        float constrain(float coord);
         float invertYCoord(float yCoord);
         bool inRange(float x, float y);
         bool inRangeRaw(float rawX, float rawY);
