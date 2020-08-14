@@ -35,12 +35,11 @@ PlaylistComponent::PlaylistComponent(DeckGUI* _deckGUI1,
     addAndMakeVisible(addToPlayer1Button);
     addAndMakeVisible(addToPlayer2Button);
 
-    // attack listeners
+    // attach listeners
     importButton.addListener(this);
     searchField.addListener(this);
     addToPlayer1Button.addListener(this);
     addToPlayer2Button.addListener(this);
-    library.addMouseListener(this, true);
 
     // searchField configuration
     searchField.setTextToShowWhenEmpty("Search Tracks (enter to submit)", 
