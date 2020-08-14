@@ -13,7 +13,7 @@
 #include <JuceHeader.h>
 #include "DJAudioPlayer.h"
 #include "WaveformDisplay.h"
-//#include "PlaylistComponent.h"
+#include "CoordinatePlot.h"
 
 //==============================================================================
 /*
@@ -22,7 +22,8 @@ class DeckGUI  : public juce::Component,
                  public juce::Button::Listener,
                  public juce::Slider::Listener,
                  public juce::FileDragAndDropTarget,
-                 public juce::Timer
+                 public juce::Timer,
+                 public CoordinatePlot::Listener
 {
 public:
     DeckGUI(int _id,
@@ -38,6 +39,8 @@ public:
     void buttonClicked(juce::Button* button) override;
     /**Implement Slider::Listener */
     void sliderValueChanged(juce::Slider* slider) override;
+    /**Implement CoordinatePlot::Listener */
+    void coordPlotValueChanged(CoordinatePlot* coordinatePlot) override;
     /**Detects if file is being dragged over deck*/
     bool isInterestedInFileDrag(const juce::StringArray& files) override;
     /**Detects if file is dropped onto deck*/
@@ -50,6 +53,7 @@ private:
     
     juce::TextButton playButton{ "PLAY" };
     juce::TextButton stopButton{ "STOP" };
+    juce::TextButton loadButton{ "LOAD" };
     juce::Slider volSlider;
     juce::Label volLabel;
     juce::Slider speedSlider;
@@ -57,7 +61,8 @@ private:
     juce::Slider posSlider;
     juce::Label posLabel;
     juce::Slider reverbSlider;
-    juce::TextButton loadButton{ "LOAD" };
+    CoordinatePlot reverbPlot1;
+    CoordinatePlot reverbPlot2;
 
     void loadFile(juce::URL audioURL);
 

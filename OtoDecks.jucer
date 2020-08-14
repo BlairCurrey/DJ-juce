@@ -4,6 +4,10 @@
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
   <MAINGROUP id="WDF8H3" name="OtoDecks">
     <GROUP id="{C6BE2CD3-536F-353C-9045-9E88980D73F7}" name="Source">
+      <FILE id="xkclPI" name="CoordinatePlot.cpp" compile="1" resource="0"
+            file="Source/CoordinatePlot.cpp"/>
+      <FILE id="IogFP3" name="CoordinatePlot.h" compile="0" resource="0"
+            file="Source/CoordinatePlot.h"/>
       <FILE id="JJl1Ud" name="Track.cpp" compile="1" resource="0" file="Source/Track.cpp"/>
       <FILE id="ktSVmB" name="Track.h" compile="0" resource="0" file="Source/Track.h"/>
       <FILE id="WNscQC" name="PlaylistComponent.cpp" compile="1" resource="0"

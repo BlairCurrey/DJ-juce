@@ -5,7 +5,7 @@ MainComponent::MainComponent()
 {
     // Make sure you set the size of the component after
     // you add any child components.
-    setSize (800, 600);
+    setSize (944, 600);
 
     // Some platforms require permissions to open input channels so request that here
     if (juce::RuntimePermissions::isRequired (juce::RuntimePermissions::recordAudio)
@@ -82,10 +82,16 @@ void MainComponent::resized()
     // If you add any child components, this is where you should
     // update their positions.
 
-    auto columnWidth = getWidth() / 3;
-    auto rowHeight = getHeight() / 2;
+    //playlistComponent.setBounds(0, 0, getWidth() / 3, getHeight());
+    //deckGUI1.setBounds(getWidth() / 3, 0, 2 * getWidth() / 3, getHeight() / 2);
+    //deckGUI2.setBounds(getWidth() / 3, getHeight() / 2, 2 * getWidth() / 3, getHeight() / 2);
+    int columns = 100;
+    auto playlistRight = 28 * getWidth() / columns;
+    playlistComponent.setBounds(0, 0, playlistRight, getHeight());
+    deckGUI1.setBounds(playlistRight, 0, getWidth() - playlistRight, getHeight() / 2);
+    deckGUI2.setBounds(playlistRight, getHeight() / 2, getWidth() - playlistRight, getHeight() / 2);
 
-    playlistComponent.setBounds(0, 0, columnWidth, 2 * rowHeight);
-    deckGUI1.setBounds(columnWidth, 0, 2 * columnWidth, rowHeight);
-    deckGUI2.setBounds(columnWidth, rowHeight, 2 * columnWidth, rowHeight);
+    //getWidth() - getWidth() / columns - getHeight() / 4
+    //deckGUI1.setBounds(playlistRight, 0, getWidth() - playlistRight - getHeight() / 4, getHeight() / 2);
+    //deckGUI2.setBounds(playlistRight, getHeight() / 2, getWidth() - playlistRight - getHeight() / 4, getHeight() / 2);
 }

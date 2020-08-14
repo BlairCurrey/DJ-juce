@@ -80,7 +80,6 @@ void WaveformDisplay::resized()
 
 void WaveformDisplay::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
-    DBG("WaveformDisplay::changeListenerCallback called");
     repaint();
 }
 

@@ -13,11 +13,11 @@ DJAudioPlayer::DJAudioPlayer(juce::AudioFormatManager& _formatManager
                             ) : formatManager(_formatManager)
 {
     //Default reverb settings
-    //juce::Reverb::Parameters params = reverbSource.getParameters();
-    //DBG("params room size: " << params.roomSize);
-    //DBG("params damping: " << params.damping);
-    //DBG("params wet level: " << params.wetLevel);
-    //DBG("params dry level: " << params.dryLevel);
+    reverbParameters.roomSize = 0;
+    reverbParameters.damping = 0;
+    reverbParameters.wetLevel = 0;
+    reverbParameters.dryLevel = 1.0;
+    reverbSource.setParameters(reverbParameters);
 }
 
 DJAudioPlayer::~DJAudioPlayer()
@@ -53,16 +53,6 @@ void DJAudioPlayer::loadURL(juce::URL audioURL)
             true));
         transportSource.setSource(newSource.get(), 0, nullptr, reader->sampleRate);
         readerSource.reset(newSource.release());
-        
-        // Get metadata from files (Ogg Vorbis works best)
-        //juce::StringArray keys = reader->metadataValues.getAllKeys();
-        //int count = keys.size();
-        //DBG("The size of the metadata string array is " << count);
-        //DBG("The first key is " << keys[0]);
-        //for (juce::String key : reader->metadataValues.getAllKeys()) 
-        //{
-        //    DBG("Key: " + key + " value: " + reader->metadataValues.getValue(key, "unknown"));
-        //}
     }
 }
 void DJAudioPlayer::play()
@@ -114,13 +104,12 @@ void DJAudioPlayer::setSpeed(double ratio)
     }
 }
 
-void DJAudioPlayer::setRoomSize(double size)
+void DJAudioPlayer::setRoomSize(float size)
 {
     DBG("DJAudioPlayer::setRoomSize called");
-    size = float(size);
     if (size < 0 || size > 1.0)
     {
-        DBG("DJAudioPlayer::setRoomSize should be between");
+        DBG("DJAudioPlayer::setRoomSize size should be between 0 and 1.0");
     }
     else {
         reverbParameters.roomSize = size;
@@ -128,13 +117,12 @@ void DJAudioPlayer::setRoomSize(double size)
     }
 }
 
-void DJAudioPlayer::setDamping(double dampingAmt)
+void DJAudioPlayer::setDamping(float dampingAmt)
 {
     DBG("DJAudioPlayer::setDamping called");
-    dampingAmt = float(dampingAmt);
     if (dampingAmt < 0 || dampingAmt > 1.0)
     {
-        DBG("DJAudioPlayer::setDamping should be between");
+        DBG("DJAudioPlayer::setDamping amount should be between 0 and 1.0");
     }
     else {
         reverbParameters.damping = dampingAmt;
@@ -142,13 +130,12 @@ void DJAudioPlayer::setDamping(double dampingAmt)
     }
 }
 
-void DJAudioPlayer::setWetLevel(double wetLevel)
+void DJAudioPlayer::setWetLevel(float wetLevel)
 {
     DBG("DJAudioPlayer::setWetLevel called");
-    wetLevel = float(wetLevel);
     if (wetLevel < 0 || wetLevel > 1.0)
     {
-        DBG("DJAudioPlayer::setWetLevel should be between");
+        DBG("DJAudioPlayer::setWetLevel level should be between 0 and 1.0");
     }
     else {
         reverbParameters.wetLevel = wetLevel;
@@ -156,13 +143,12 @@ void DJAudioPlayer::setWetLevel(double wetLevel)
     }
 }
 
-void DJAudioPlayer::setDryLevel(double dryLevel)
+void DJAudioPlayer::setDryLevel(float dryLevel)
 {
     DBG("DJAudioPlayer::setDryLevel called");
-    dryLevel = float(dryLevel);
     if (dryLevel < 0 || dryLevel > 1.0)
     {
-        DBG("DJAudioPlayer::setDryLevel should be between");
+        DBG("DJAudioPlayer::setDryLevel level should be between 0 and 1.0");
     }
     else {
         reverbParameters.dryLevel = dryLevel;

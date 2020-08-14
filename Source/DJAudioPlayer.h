@@ -38,13 +38,13 @@ class DJAudioPlayer : public juce::AudioSource
         /**Gets the length of transport source in seconds*/
         double getLengthInSeconds();
         /**Sets the amount of reverb*/
-        void setRoomSize(double size);
+        void setRoomSize(float size);
         /**Sets the amount of reverb*/
-        void setDamping(double dampingAmt);
+        void setDamping(float dampingAmt);
         /**Sets the amount of reverb*/
-        void setWetLevel(double wetLevel);
+        void setWetLevel(float wetLevel);
         /**Sets the amount of reverb*/
-        void setDryLevel(double dryLevel);
+        void setDryLevel(float dryLevel);
     private:
         void setPosition(double posInSecs);
         juce::AudioFormatManager& formatManager;
