@@ -21,7 +21,7 @@ CoordinatePlot::CoordinatePlot()
 
     setGridLineCount();
     setRange(); //sets to default
-    setCoords(75.0f, 75.0f);
+    initCoords(75.0f, 75.0f);
 }
 
 CoordinatePlot::~CoordinatePlot() {}
@@ -37,32 +37,36 @@ void CoordinatePlot::paint (juce::Graphics& g)
     drawMarker(g);
     g.setColour(juce::Colours::white);
     if (markerMoved) { drawText(g); }
+
+    // capture raw range for reference when resizing
+    setRangeRaw();
 }
 
 void CoordinatePlot::resized()
 {
     setSettings();
+    updateCoords();
 }
 
 void CoordinatePlot::mouseDown(const juce::MouseEvent& event)
 {
+    DBG("Mouse Clicked on plot at: " << getX() << "," << getY());
     markerMoved = true;
     setMouseCursor(juce::MouseCursor::NoCursor);
 
     setCoords(float(event.getMouseDownX()), float(event.getMouseDownY()));
-    DBG("Mouse Clicked on plot at: " << getX() << "," << getY());
     interactWithComponent();
     repaint();
 }
 
 void CoordinatePlot::mouseDrag(const juce::MouseEvent& event)
 {
+    DBG("Mouse dragged to: " << getX() << ", " << getY());
     juce::Point<int> rawPos(event.getPosition());
     float rawX = float(rawPos.getX());
     float rawY = float(rawPos.getY());
 
     setCoords(rawX, rawY);
-    DBG("Mouse dragged to: " << getX() << ", " << getY());
     interactWithComponent();
     repaint();
 }
@@ -81,16 +85,11 @@ void CoordinatePlot::addListener(Listener* l) { listeners.add(l); }
 
 void CoordinatePlot::removeListener(Listener* l) { listeners.remove(l); }
 
-float CoordinatePlot::getX()
-{
-    float transX = constrain(coordsRaw['x']);
-    return transX;
-}
+float CoordinatePlot::getX() { return constrain(coordsRaw['x']); }
 
 float CoordinatePlot::getY()
 {
-    float transInvY = invertYCoord(constrain(coordsRaw['y']));
-    return transInvY;
+    return invertCoord(constrain(coordsRaw['y']), range['min'], range['max']);
 }
 
 void CoordinatePlot::setGridLineCount(int lineCount)
@@ -105,10 +104,34 @@ void CoordinatePlot::setRange(float min, float max)
     range['max'] = max;
 }
 
+void CoordinatePlot::initCoords(float rawX, float rawY)
+{
+    coordsRaw['x'] = rawX;
+    coordsRaw['y'] = rawY;
+}
+
 void CoordinatePlot::setCoords(float rawX, float rawY)
 {
-    coordsRaw['x'] = rawX; 
-    coordsRaw['y'] = rawY;
+    if(inRangeRaw(rawX, rawY)) { coordsRaw['x'] = rawX, coordsRaw['y'] = rawY; }
+}
+
+void CoordinatePlot::updateCoords()
+{
+    //get ratios based off initial range
+    double xRatio = double(coordsRaw['x'] / (rangeRaw['max'] - rangeRaw['min']));
+    double yRatio = double(coordsRaw['y'] / (rangeRaw['max'] - rangeRaw['min']));
+
+    // new x and y based off current size and previous ratio
+    float newX = float(right * xRatio);
+    float newY = float(bottom * yRatio);
+
+    setCoords(newX, newY);
+}
+
+void CoordinatePlot::setRangeRaw()
+{
+    rangeRaw['min'] = getLocalBounds().getX();
+    rangeRaw['max'] = getLocalBounds().getWidth();
 }
 
 void CoordinatePlot::drawPlot(juce::Graphics& g)
@@ -147,6 +170,7 @@ void CoordinatePlot::drawGrid(juce::Graphics& g)
 
 void CoordinatePlot::drawMarker(juce::Graphics& g)
 {
+    //set length of cursor
     float length = float(getLocalBounds().getWidth() / 15);
 
     juce::Line<float> lineH(juce::Point<float>(coordsRaw['x'] - length, coordsRaw['y']),
@@ -199,16 +223,12 @@ float CoordinatePlot::constrain(float coord)
     return newValue;
 }
 
-float CoordinatePlot::invertYCoord(float yCoord)
+/**Inverts coord within a range between min and max*/
+float CoordinatePlot::invertCoord(float coord, float min, float max)
 {
-    return abs(range['max'] - yCoord);
+    return (min + max) - coord;
 }
 bool CoordinatePlot::inRangeRaw(float rawX, float rawY)
 {
     return (rawX >= left && rawX <= right && rawY >= top && rawY <= bottom);
-}
-
-bool CoordinatePlot::inRange(float x, float y)
-{
-    return (x >= range['min'] && x <= range['max'] && y >= range['min'] && y <= range['max']);
 }

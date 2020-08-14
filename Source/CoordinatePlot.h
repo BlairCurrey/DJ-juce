@@ -15,7 +15,8 @@
 //==============================================================================
 /*
 */
-class CoordinatePlot  : public juce::Component
+class CoordinatePlot  : public juce::Component,
+                        public juce::SettableTooltipClient
 {
     public:
         CoordinatePlot();
@@ -58,7 +59,11 @@ class CoordinatePlot  : public juce::Component
         juce::ListenerList<Listener> listeners;
 
         std::map<char, float> coordsRaw;
-        void setCoords(float rawX = 0.0f, float rawY = 0.0f);
+        std::map<char, float> rangeRaw;
+        void setRangeRaw();
+        void initCoords(float rawX, float rawY);
+        void setCoords(float rawX, float rawY);
+        void updateCoords();
 
         //Positional Settings
         float midY;
@@ -81,8 +86,7 @@ class CoordinatePlot  : public juce::Component
         bool markerMoved{ false };
 
         float constrain(float coord);
-        float invertYCoord(float yCoord);
-        bool inRange(float x, float y);
+        float invertCoord(float coord, float min, float max);
         bool inRangeRaw(float rawX, float rawY);
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CoordinatePlot)
 };

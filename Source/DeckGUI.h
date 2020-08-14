@@ -68,6 +68,7 @@ private:
 
     DJAudioPlayer* player;
     WaveformDisplay waveformDisplay;
+    juce::SharedResourcePointer< juce::TooltipWindow > sharedTooltip;
 
     friend class PlaylistComponent;
 
