@@ -21,12 +21,6 @@ PlaylistComponent::PlaylistComponent(DeckGUI* _deckGUI1,
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
-
-    // library table configuration
-    library.getHeader().addColumn("Tracks", 1, 170);
-    library.getHeader().addColumn("Length", 2, 63);
-    library.getHeader().addColumn("", 3, 30);
-    library.setModel(this);
     
     // add components
     addAndMakeVisible(importButton);
@@ -46,7 +40,11 @@ PlaylistComponent::PlaylistComponent(DeckGUI* _deckGUI1,
                                        juce::Colours::orange);
     searchField.onReturnKey = [this] { searchLibrary (searchField.getText()); };
     
-    // load library from file
+    // setup table and load library from file
+    library.getHeader().addColumn("Tracks", 1, 1);
+    library.getHeader().addColumn("Length", 2, 1);
+    library.getHeader().addColumn("", 3, 1);
+    library.setModel(this);
     loadLibrary();
 }
 
@@ -71,6 +69,7 @@ void PlaylistComponent::paint (juce::Graphics& g)
 
     g.setColour (juce::Colours::white);
     g.setFont (14.0f);
+
 }
 
 void PlaylistComponent::resized()
@@ -83,7 +82,12 @@ void PlaylistComponent::resized()
     library.setBounds(0, 1 * getHeight() / 16, getWidth(), 13 * getHeight() / 16);
     searchField.setBounds(0, 14 * getHeight() / 16, getWidth(), getHeight() / 16);
     addToPlayer1Button.setBounds(0, 15 * getHeight() / 16, getWidth() / 2, getHeight() / 16);
-    addToPlayer2Button.setBounds(getWidth() / 2, 15 * getHeight() / 16, getWidth() / 2, getHeight() / 16);
+    addToPlayer2Button.setBounds(getWidth() / 2, 15 * getHeight() / 16, getWidth() / 2, getHeight() / 16);  
+
+    //set columns
+    library.getHeader().setColumnWidth(1, 12.8 * getWidth() / 20);
+    library.getHeader().setColumnWidth(2, 5 * getWidth() / 20);
+    library.getHeader().setColumnWidth(3, 2 * getWidth() / 20);
 }
 
 int PlaylistComponent::getNumRows()
