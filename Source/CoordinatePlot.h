@@ -34,8 +34,6 @@ class CoordinatePlot  : public juce::Component
         void setGridLineCount(int lineCount=4);
         /**Set range*/
         void setRange(float min=0.0f, float max= 1.0f);
-        /**Set default position from raw x and y positions*/
-        void setAllCoords(float rawX=0.0f, float rawY=0.0f);
         /**Gets the current x coord*/
         float getX();
         /**Gets the current y coord*/
@@ -59,33 +57,30 @@ class CoordinatePlot  : public juce::Component
     private:
         juce::ListenerList<Listener> listeners;
 
-        std::map<char, float> coords;
         std::map<char, float> coordsRaw;
+        void setCoords(float rawX = 0.0f, float rawY = 0.0f);
 
-        //Settings
+        //Positional Settings
         float midY;
         float midX;
         float left;
         float right;
         float top;
         float bottom;
+        void setSettings();
 
         //User settings
         int gridLineCount;
         std::map<char, float> range;
-        //std::pair<float, float> range;
 
         void drawPlot(juce::Graphics& g);
         void drawAxis(juce::Graphics& g);
         void drawGrid(juce::Graphics& g);
         void drawMarker(juce::Graphics& g);
         void drawText(juce::Graphics& g);
+        bool markerMoved{ false };
 
-        void setSettings();
-        void setCoords(float rawX, float rawY);
-        void setCoordsRaw(float rawX, float rawY);
-
-        float translateCoordToRange(int coord);
+        float translateCoordToRange(float coord);
         float invertYCoord(float yCoord);
         bool inRange(float x, float y);
         bool inRangeRaw(float rawX, float rawY);

@@ -20,8 +20,8 @@ CoordinatePlot::CoordinatePlot()
     // initialise any special settings that your component needs.
 
     setGridLineCount();
-    setRange();
-    setAllCoords();
+    setRange(); //sets to default
+    setCoords(75.0f, 75.0f);
 }
 
 CoordinatePlot::~CoordinatePlot() {}
@@ -30,34 +30,27 @@ CoordinatePlot::Listener::~Listener() {}
 
 void CoordinatePlot::paint (juce::Graphics& g)
 {
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
-
-       You should replace everything in this method with your own
-       drawing code..
-    */
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));   // clear the background
     g.setColour (juce::Colours::grey);
     drawPlot(g);
     g.setColour(juce::Colours::orange);
     drawMarker(g);
     g.setColour(juce::Colours::white);
-    drawText(g);
+    if (markerMoved) { drawText(g); }
 }
 
 void CoordinatePlot::resized()
 {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
     setSettings();
 }
 
 void CoordinatePlot::mouseDown(const juce::MouseEvent& event)
 {
+    markerMoved = true;
     setMouseCursor(juce::MouseCursor::NoCursor);
 
-    setAllCoords(float(event.getMouseDownX()), float(event.getMouseDownY()));
-    DBG("Mouse Clicked on plot at: " << coords['x'] << "," << coords['y']);
+    setCoords(float(event.getMouseDownX()), float(event.getMouseDownY()));
+    DBG("Mouse Clicked on plot at: " << getX() << "," << getY());
     interactWithComponent();
     repaint();
 }
@@ -68,8 +61,8 @@ void CoordinatePlot::mouseDrag(const juce::MouseEvent& event)
     float rawX = float(rawPos.getX());
     float rawY = float(rawPos.getY());
 
-    setAllCoords(rawX, rawY);
-    DBG("Mouse dragged to: " << coords['x'] << ", " << coords['y']);
+    setCoords(rawX, rawY);
+    DBG("Mouse dragged to: " << getX() << ", " << getY());
     interactWithComponent();
     repaint();
 }
@@ -90,12 +83,14 @@ void CoordinatePlot::removeListener(Listener* l) { listeners.remove(l); }
 
 float CoordinatePlot::getX()
 {
-    return coords['x'];
+    float transX = translateCoordToRange(coordsRaw['x']);
+    return transX;
 }
 
 float CoordinatePlot::getY()
 {
-    return coords['y'];
+    float transInvY = invertYCoord(translateCoordToRange(coordsRaw['y']));
+    return transInvY;
 }
 
 void CoordinatePlot::setGridLineCount(int lineCount)
@@ -110,24 +105,10 @@ void CoordinatePlot::setRange(float min, float max)
     range['max'] = max;
 }
 
-void CoordinatePlot::setAllCoords(float rawX, float rawY)
-{
-    setCoords(rawX, rawY);
-    setCoordsRaw(rawX, rawY);
-}
-
 void CoordinatePlot::setCoords(float rawX, float rawY)
 {
-    int x = int(rawX);
-    int y = int(rawY);
-    float transX = translateCoordToRange(x);
-    float transInvY = invertYCoord(translateCoordToRange(y));
-    if (inRange(transX, transInvY)) { coords['x'] = transX, coords['y'] = transInvY; }
-}
-
-void CoordinatePlot::setCoordsRaw(float rawX, float rawY)
-{
-    if (inRangeRaw(rawX, rawY)) { coordsRaw['x'] = rawX, coordsRaw['y'] = rawY; }
+    coordsRaw['x'] = rawX; 
+    coordsRaw['y'] = rawY;
 }
 
 void CoordinatePlot::drawPlot(juce::Graphics& g)
@@ -177,6 +158,7 @@ void CoordinatePlot::drawMarker(juce::Graphics& g)
     g.drawLine(lineV, 2.0f);
 }
 
+
 void CoordinatePlot::drawText(juce::Graphics& g)
 {
     g.setFont(float(getWidth()/12));
@@ -206,7 +188,7 @@ void CoordinatePlot::setSettings()
     bottom = float(getLocalBounds().getBottom());
 }
 
-float CoordinatePlot::translateCoordToRange(int coord)
+float CoordinatePlot::translateCoordToRange(float coord)
 {
     float oldRangeMin = float(getLocalBounds().getX());
     float oldRangeMax = float(getLocalBounds().getWidth());
