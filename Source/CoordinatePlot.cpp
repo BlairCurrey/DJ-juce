@@ -38,6 +38,7 @@ void CoordinatePlot::paint (juce::Graphics& g)
     g.setColour(juce::Colours::white);
     if (markerMoved) { drawText(g); }
 
+    // capture raw range for reference when resizing
     setRangeRaw();
 }
 
@@ -49,23 +50,23 @@ void CoordinatePlot::resized()
 
 void CoordinatePlot::mouseDown(const juce::MouseEvent& event)
 {
+    DBG("Mouse Clicked on plot at: " << getX() << "," << getY());
     markerMoved = true;
     setMouseCursor(juce::MouseCursor::NoCursor);
 
     setCoords(float(event.getMouseDownX()), float(event.getMouseDownY()));
-    DBG("Mouse Clicked on plot at: " << getX() << "," << getY());
     interactWithComponent();
     repaint();
 }
 
 void CoordinatePlot::mouseDrag(const juce::MouseEvent& event)
 {
+    DBG("Mouse dragged to: " << getX() << ", " << getY());
     juce::Point<int> rawPos(event.getPosition());
     float rawX = float(rawPos.getX());
     float rawY = float(rawPos.getY());
 
     setCoords(rawX, rawY);
-    DBG("Mouse dragged to: " << getX() << ", " << getY());
     interactWithComponent();
     repaint();
 }

@@ -15,7 +15,8 @@
 //==============================================================================
 /*
 */
-class CoordinatePlot  : public juce::Component
+class CoordinatePlot  : public juce::Component,
+                        public juce::SettableTooltipClient
 {
     public:
         CoordinatePlot();

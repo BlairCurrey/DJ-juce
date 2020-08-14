@@ -92,6 +92,8 @@ DeckGUI::DeckGUI(int _id,
     //reverbPlot1.setRange(0.0, 1.0);
     //reverbPlot2.setRange(0.0, 1.0);
     //reverbPlot1.setGridLineCount(2);
+    reverbPlot1.setTooltip("x: damping\ny: room size");
+    reverbPlot2.setTooltip("x: dry level\ny: wet level");
 
     startTimer(500);
 }
