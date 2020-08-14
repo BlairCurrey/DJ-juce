@@ -30,7 +30,6 @@ DeckGUI::DeckGUI(int _id,
     addAndMakeVisible(speedLabel);
     addAndMakeVisible(posSlider);
     addAndMakeVisible(posLabel);
-    //addAndMakeVisible(reverbSlider);
     addAndMakeVisible(reverbPlot1);
     addAndMakeVisible(reverbPlot2);
     addAndMakeVisible(waveformDisplay);
@@ -43,8 +42,8 @@ DeckGUI::DeckGUI(int _id,
     speedSlider.addListener(this);
     posSlider.addListener(this);
     reverbSlider.addListener(this);
-    //reverbPlot1.addListener(this);
-    //reverbPlot2.addListener(this);
+    reverbPlot1.addListener(this);
+    reverbPlot2.addListener(this);
 
     //configure volume slider and label
     double volDefaultValue = 0.5;
@@ -92,6 +91,7 @@ DeckGUI::DeckGUI(int _id,
     //configure reverb plots
     //reverbPlot1.setRange(0.0, 1.0);
     //reverbPlot2.setRange(0.0, 1.0);
+    //reverbPlot1.setGridLineCount(2);
 
     startTimer(500);
 }
@@ -118,8 +118,8 @@ void DeckGUI::paint (juce::Graphics& g)
 
 void DeckGUI::resized()
 {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
+     /*This method is where you should set the bounds of any child
+     components that your component contains..*/
     auto sliderLeft = getWidth() / 9;
     auto mainRight = getWidth() - getHeight() / 2;
     auto plotRight = getWidth() - mainRight; // should == getHeight() / 2
@@ -131,7 +131,6 @@ void DeckGUI::resized()
     volSlider.setBounds(sliderLeft, getHeight() / 8, mainRight - sliderLeft, getHeight() / 8);
     speedSlider.setBounds(sliderLeft, 2 * getHeight() / 8, mainRight - sliderLeft, getHeight() / 8);
     posSlider.setBounds(sliderLeft, 3 * getHeight() / 8, mainRight - sliderLeft, getHeight() / 8);
-    //reverbSlider.setBounds(0, 4 * getHeight() / 8, mainRight, getHeight() / 8);
     reverbPlot1.setBounds(mainRight, 0, plotRight, getHeight() / 2);
     reverbPlot2.setBounds(mainRight, getHeight()/2, plotRight, getHeight() / 2);
     waveformDisplay.setBounds(0, 4 * getHeight() / 8, mainRight, 4 * getHeight() / 8);
@@ -160,6 +159,7 @@ void DeckGUI::buttonClicked(juce::Button* button)
     }
 }
 
+
 void DeckGUI::sliderValueChanged(juce::Slider* slider)
 {
     if (slider == &volSlider)
@@ -177,11 +177,23 @@ void DeckGUI::sliderValueChanged(juce::Slider* slider)
         DBG("Position slider moved " << slider->getValue());
         player->setPositionRelative(slider->getValue());
     }
-    //if (slider == &reverbSlider)
-    //{
-    //    DBG("Reverb slider moved " << slider->getValue());
-    //    player->setRoomSize(slider->getValue());
-    //}
+}
+
+void DeckGUI::coordPlotValueChanged(CoordinatePlot* coordinatePlot)
+{
+    DBG("DeckGUI::coordPlotValueChanged called");
+    if (coordinatePlot == &reverbPlot1)
+    {
+        DBG("Deck " << id << ": ReverbPlot1 was clicked");
+        player->setRoomSize(coordinatePlot->getY());
+        player->setDamping(coordinatePlot->getX());
+    }
+    if (coordinatePlot == &reverbPlot2)
+    {
+        DBG("Deck " << id << ": ReverbPlot2 was clicked");
+        player->setWetLevel(coordinatePlot->getY());
+        player->setDryLevel(coordinatePlot->getX());
+    }
 }
 
 bool DeckGUI::isInterestedInFileDrag(const juce::StringArray& files)

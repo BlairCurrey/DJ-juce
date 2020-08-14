@@ -23,9 +23,71 @@ class CoordinatePlot  : public juce::Component
 
         void paint (juce::Graphics&) override;
         void resized() override;
+        
+        void mouseDown(const juce::MouseEvent& event) override;
+        void mouseUp(const juce::MouseEvent& event) override;
+        void mouseDrag(const juce::MouseEvent& event) override;
 
-        //void setRange(double newMinimum, double newMaximum, double newInterval = 0);
+        /**Set the number of grid lines shown on the Coordinate Plot
+        *  Defaults to 4 (4 vertical, 4 horizontal). Reduces lineCount
+        *  by 1 if odd. Uses default if lineCount < 2*/
+        void setGridLineCount(int lineCount=4);
+        /**Set range*/
+        void setRange(float min=0.0f, float max= 1.0f);
+        /**Set default position from raw x and y positions*/
+        void setAllCoords(float rawX=0.0f, float rawY=0.0f);
+        /**Gets the current x coord*/
+        float getX();
+        /**Gets the current y coord*/
+        float getY();
+
+        class Listener
+        {
+            public:
+                Listener();
+                ~Listener();
+                
+                //listener callback
+                virtual void coordPlotValueChanged(CoordinatePlot* coordinatePlot) = 0;
+        };
+        //calls listener callback
+        void interactWithComponent();
+        //add component to Listener list
+        void addListener(Listener* l);
+        //remove component from Listener list
+        void removeListener(Listener* l);
     private:
-        //uce::Range<double> range{0.0, 1.0};
+        juce::ListenerList<Listener> listeners;
+
+        std::map<char, float> coords;
+        std::map<char, float> coordsRaw;
+
+        //Settings
+        float midY;
+        float midX;
+        float left;
+        float right;
+        float top;
+        float bottom;
+
+        //User settings
+        int gridLineCount;
+        std::map<char, float> range;
+        //std::pair<float, float> range;
+
+        void drawPlot(juce::Graphics& g);
+        void drawAxis(juce::Graphics& g);
+        void drawGrid(juce::Graphics& g);
+        void drawMarker(juce::Graphics& g);
+        void drawText(juce::Graphics& g);
+
+        void setSettings();
+        void setCoords(float rawX, float rawY);
+        void setCoordsRaw(float rawX, float rawY);
+
+        float translateCoordToRange(int coord);
+        float invertYCoord(float yCoord);
+        bool inRange(float x, float y);
+        bool inRangeRaw(float rawX, float rawY);
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CoordinatePlot)
 };

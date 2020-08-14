@@ -22,7 +22,8 @@ class DeckGUI  : public juce::Component,
                  public juce::Button::Listener,
                  public juce::Slider::Listener,
                  public juce::FileDragAndDropTarget,
-                 public juce::Timer
+                 public juce::Timer,
+                 public CoordinatePlot::Listener
 {
 public:
     DeckGUI(int _id,
@@ -38,6 +39,8 @@ public:
     void buttonClicked(juce::Button* button) override;
     /**Implement Slider::Listener */
     void sliderValueChanged(juce::Slider* slider) override;
+    /**Implement CoordinatePlot::Listener */
+    void coordPlotValueChanged(CoordinatePlot* coordinatePlot) override;
     /**Detects if file is being dragged over deck*/
     bool isInterestedInFileDrag(const juce::StringArray& files) override;
     /**Detects if file is dropped onto deck*/
