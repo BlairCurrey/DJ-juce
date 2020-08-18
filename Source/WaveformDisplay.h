@@ -34,7 +34,7 @@ private:
     int id;
     bool fileLoaded;
     double position;
-    juce::String fileName{"Test"};
+    juce::String fileName;
     juce::AudioThumbnail audioThumb;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaveformDisplay)
 };

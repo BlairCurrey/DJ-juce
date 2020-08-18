@@ -173,11 +173,13 @@ void CoordinatePlot::drawMarker(juce::Graphics& g)
     //set length of cursor
     float length = float(getLocalBounds().getWidth() / 15);
 
+    //create lines
     juce::Line<float> lineH(juce::Point<float>(coordsRaw['x'] - length, coordsRaw['y']),
         juce::Point<float>(coordsRaw['x'] + length, coordsRaw['y']));
     juce::Line<float> lineV(juce::Point<float>(coordsRaw['x'], coordsRaw['y'] - length),
         juce::Point<float>(coordsRaw['x'], coordsRaw['y'] + length));
     
+    //draw lines
     g.drawLine(lineH, 2.0f);
     g.drawLine(lineV, 2.0f);
 }
