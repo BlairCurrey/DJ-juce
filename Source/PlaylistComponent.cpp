@@ -199,7 +199,7 @@ void PlaylistComponent::loadInPlayer(DeckGUI* deckGUI)
     int selectedRow{ library.getSelectedRow() };
     if (selectedRow != -1)
     {
-        DBG("Adding: " << tracks[selectedRow].title << " to Player 1");
+        DBG("Adding: " << tracks[selectedRow].title << " to Player");
         deckGUI->loadFile(tracks[selectedRow].URL);
     }
     else
